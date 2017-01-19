@@ -1,0 +1,16 @@
+import string
+testString = "wrw blf hvv ozhg mrtsg'h vkrhlwv?"
+testString2 = "Yvzs! I xzm'g yvorvev Lzmxv olhg srh qly zg gsv xlolmb!!"
+
+def answer(s):
+    letters        = string.ascii_lowercase
+    reverseLetters = letters[::-1]
+    conversionDict = dict(zip(letters, reverseLetters))
+    getConversion  = lambda c: conversionDict[c] if c.islower() else c
+    result         = map(getConversion, s)
+
+    return ''.join(result)
+
+
+
+answer(testString2)
