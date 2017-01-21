@@ -1,0 +1,56 @@
+import Data.List
+
+data Tree a = Empty | Branch a (Tree a) (Tree a)
+        deriving (Show, Eq)
+
+-- filled :: Tree a -> [[Bool]]
+-- filled Empty = repeat [False]
+-- filled (Branch _ l r) = [True] : zipWith (++) (filled l) (filled r)
+
+completeBinaryTree :: Int -> Tree Int
+completeBinaryTree h = generate_tree valueList
+  where
+    valueList = reverse [1..(2^h-1)]
+    generate_tree :: [Int] -> Tree Int
+    generate_tree [] = Empty
+    generate_tree (name:[]) = Branch name Empty Empty
+    generate_tree (name:names)= Branch name
+                               (generate_tree half2)
+                               (generate_tree half1)
+      where
+        (half1, half2) = splitAt half names
+        len = length names
+        half = div len 2
+--
+testOne :: (Int, [Int])
+testOne = (3,[7, 3, 5, 1])
+testOneResult = [-1, 7, 6, 3]
+
+testTwo :: (Int, [Int])
+testTwo = (5,[19, 14, 28])
+testTwoResult = [21, 15, 29]
+
+makeAndSearch (h, q) = map (search tree) q
+  where
+    tree = completeBinaryTree h
+
+--
+test = completeBinaryTree 3
+
+search :: Tree Int -> Int -> Maybe Int
+search Empty _ = Nothing
+search (Branch value treeOne treeTwo) s = if nextHaz treeOne s || nextHaz treeTwo s
+                                               then return value
+                                               else mergeNothing st1 st2
+  where
+    st1 = search treeOne s
+    st2 = search treeTwo s
+    mergeNothing Nothing Nothing = Nothing
+    mergeNothing Nothing x = x
+    mergeNothing x Nothing = x
+    mergeNothing x y = error "this should not have happened"
+
+
+nextHaz :: Tree Int -> Int -> Bool
+nextHaz (Branch value _ _) s = value == s
+nextHaz _ _ = False
