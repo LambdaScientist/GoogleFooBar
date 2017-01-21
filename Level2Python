@@ -1,0 +1,68 @@
+def splitInHalf(aList):
+    full = len(aList)
+    half = full/2
+    return aList[0:half], aList[half:full]
+
+class Tree(object):
+    def __init__(self):
+        self.left = None
+        self.right = None
+        self.data = None
+    def __str__(self):
+        return ("Data = " + str(self.data) + "Left = " + str(self.left) + "Right = " + str(self.right)  )
+
+def makeTree(h):
+    limit = (2**h)-1
+    fluxConverters = list(range(limit,0,-1))
+    result = generate_tree(list(fluxConverters))
+    return result
+
+def generate_tree(listInt):
+    if not listInt:
+        return None
+    elif (len(listInt) == 1):
+        rTreeOne = Tree()
+        rTreeOne.data = listInt[0]
+        return rTreeOne
+    else:
+        rTreeList = Tree()
+        rTreeList.data   = listInt.pop(0)
+        half1, half2 = splitInHalf(list(listInt))
+        rTreeList.left   = generate_tree(half1)
+        rTreeList.right  = generate_tree(half2)
+        return rTreeList
+
+def searchTree(tree,search):
+    if tree == None:
+        return -1
+    else:
+        if (nextHaz(tree.left,search) | nextHaz(tree.right,search)):
+            return tree.data
+        else:
+            left = searchTree(tree.left,search)
+            right = searchTree(tree.right,search)
+            return mergeResults(left,right)
+
+def mergeResults(x,y):
+    if(x!=-1):
+        return x
+    else:
+        return y
+
+def nextHaz(tree, search):
+    if(tree != None):
+        return tree.data == search
+    else:
+        return False
+
+def answer(h,q):
+    tree = makeTree(h)
+    partialSearch = lambda x : searchTree(tree,x)
+    result = map(partialSearch,q)
+    return result
+
+answer(3,[7, 3, 5, 1])
+testOneResult = [-1, 7, 6, 3]
+
+answer(5,[19, 14, 28])
+testTwoResult = [21, 15, 29]
